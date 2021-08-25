@@ -1,0 +1,877 @@
+<section class="content">
+  <div class="container-fluid">
+    <div class="block-header">
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+          <ul class="breadcrumb breadcrumb-style ">
+            <li class="breadcrumb-item">
+              <h4 class="page-title">Dashboard</h4>
+            </li>
+            <li class="breadcrumb-item bcrumb-1">
+              <a routerLink="/dashboard/main">
+                <i class="fas fa-home"></i> Home</a>
+            </li>
+            <li class="breadcrumb-item active">Dashboard</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div #disc class="mat-card" style="width: 100%; border-radius: 5px !important; background-color : #fff">
+      <canvas #diagramMain></canvas>
+    </div>
+  </div>
+
+  <div class="container-fluid" style="padding-top : 20px;">
+
+
+    <div class="row">
+      <div class="col-xl-7 col-lg-7 col-md-12 col-sm-12">
+        <div class="card">
+
+          <div class="body">
+
+            <div class="row">
+              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6" style="text-align: center;">
+                <div style="text-align: left;">
+                  <h4>
+                    Status Valve</h4>
+
+                  <mat-divider *ngIf="statusAutoBTN === 1"  ></mat-divider>
+
+                  <h6 *ngIf="statusAutoBTN === 1"  style="margin-top: 10px; margin-bottom: 10px; ">
+                    Manual Control</h6>
+
+                  <div *ngIf="statusAutoBTN === 1"  class="row">
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3" style="text-align: left;">
+                      <button (click)="stopValveManual()" style="margin-top: 5px; margin-bottom: 10px; background-color: red; color: white;"
+                        class="mr-3" mat-raised-button>ปิด Valve</button>
+                    </div>
+
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3" style="text-align: left;">
+                      <button (click)="flushA()" style="margin-top: 5px; margin-bottom: 10px; background-color: green; color: white;"
+                        class="mr-3" mat-raised-button>Flush A</button>
+                    </div>
+
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3" style="text-align: left;">
+                      <button (click)="flushB()" style="margin-top: 5px; margin-bottom: 10px; background-color: green; color: white;"
+                        class="mr-3" mat-raised-button>Flush B</button>
+                    </div>
+
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3" style="text-align: left;">
+                      <button (click)="backwashA()" style="margin-top: 5px; margin-bottom: 10px; background-color: green; color: white;"
+                        class="mr-3" mat-raised-button>Backwash A</button>
+                    </div>
+
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3" style="text-align: left;">
+                      <button (click)="backwashB()" style="margin-top: 0px; margin-bottom: 10px; background-color: green; color: white;"
+                        class="mr-3" mat-raised-button>Backwash B</button>
+                    </div>
+
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3" style="text-align: left;">
+                      <button (click)="filter()" style="margin-top: 0px; margin-bottom: 10px; background-color: green; color: white;"
+                        class="mr-3" mat-raised-button>Filter</button>
+                    </div>
+                  </div>
+
+                  <mat-divider></mat-divider>
+
+
+                  <h6 style="margin-top: 5px; margin-bottom: 10px; ">
+                    Auto Control</h6>
+
+
+                  <button *ngIf="statusAutoBTN === 1"  (click)="autoValve()" style="margin-top: 5px; margin-bottom: 15px;" class="mr-3"
+                    mat-raised-button color="primary">เริ่มทำงานแบบ Auto</button>
+
+
+                    <button *ngIf="statusAutoBTN === 0"  (click)="stopAutoValve()" style="margin-top: 5px; margin-bottom: 15px; background-color: red; color: white;" class="mr-3"
+                    mat-raised-button >ยกเลิกทำงานแบบ Auto</button>
+
+
+
+
+
+
+                  <p>กำลังดำเนินลำดับที่ {{stateValveAutoPriority}} : {{stateValveAutoName}} </p>
+                  <p>เวลาเริ่ม : {{startTime}} </p>
+                  <p>เวลาดำเนินการ : {{delaysTime}} วินาที</p>
+                  <p>ยังเวลาดำเนินการที่เหลือ </p>
+
+                  <div class="row align-items-end" style="text-align: center; float:none;margin:auto">
+
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" style="text-align: center;">
+
+                      <h1>{{remainingTime}}</h1>
+                    </div>
+                  </div>
+
+
+                </div>
+              </div>
+
+              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6" style="text-align: center; margin-top: 10px">
+
+
+                <div class="row" style="text-align: center;">
+
+                  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4" style="text-align: center;">
+                    <p>
+                      Valve 1</p>
+                  </div>
+
+                  <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3" style="text-align: center;">
+                    <img src="{{imgValve1}}" width="30" height="30">
+                  </div>
+
+                  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4" style="text-align: center;">
+                    <p>
+                      {{statusValve1}}</p>
+                  </div>
+
+                </div>
+
+
+                <div class="row" style="text-align: center;">
+
+                  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4" style="text-align: center;">
+                    <p>
+                      Valve 2</p>
+                  </div>
+
+                  <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3" style="text-align: center;">
+                    <img src="{{imgValve2}}" width="30" height="30">
+                  </div>
+
+                  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4" style="text-align: center;">
+                    <p>
+                      {{statusValve2}}</p>
+                  </div>
+
+                </div>
+
+                <div class="row" style="text-align: center;">
+
+                  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4" style="text-align: center;">
+                    <p>
+                      Valve 3</p>
+                  </div>
+
+                  <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3" style="text-align: center;">
+                    <img src="{{imgValve3}}" width="30" height="30">
+                  </div>
+
+                  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4" style="text-align: center;">
+                    <p>
+                      {{statusValve3}}</p>
+                  </div>
+
+                </div>
+
+
+                <div class="row" style="text-align: center;">
+
+                  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4" style="text-align: center;">
+                    <p>
+                      Valve 4</p>
+                  </div>
+
+                  <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3" style="text-align: center;">
+                    <img src="{{imgValve4}}" width="30" height="30">
+                  </div>
+
+                  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4" style="text-align: center;">
+                    <p>
+                      {{statusValve4}}</p>
+                  </div>
+
+                </div>
+
+                <div class="row" style="text-align: center;">
+
+                  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4" style="text-align: center;">
+                    <p>
+                      Valve 5</p>
+                  </div>
+
+                  <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3" style="text-align: center;">
+                    <img src="{{imgValve5}}" width="30" height="30">
+                  </div>
+
+                  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4" style="text-align: center;">
+                    <p>
+                      {{statusValve5}}</p>
+                  </div>
+
+                </div>
+
+
+
+
+
+              </div>
+
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12">
+        <div class="card">
+          <div class="body">
+            <div class="row">
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" style="text-align: center;">
+                <div style="text-align: left;">
+                  <h4>
+                    Location</h4>
+
+                    <h6 style="margin-top: 10px; margin-bottom: 10px; ">
+                      7-ELEVEN (Store code: 10859)  เซเว่นอีเลฟเว่น ม.ไอนิซิโอ (ซอยสำเร็จพัฒนา)  ต.ศาลากลาง อ.บางกรวย นนทบุรี 11130 </h6>
+
+                      <h6 style="margin-top: 10px; margin-bottom: 10px; ">
+                        Tel: +66910010859</h6>
+
+
+
+                      
+
+                </div>
+
+
+              
+
+
+                <agm-map style="height: 356px" [latitude]="lat" [longitude]="lng">
+
+                  <agm-marker [latitude]="lat" [longitude]="lng">
+                    <agm-info-window>
+                      <div class="card">
+                        <div class="body">
+                          <div class="row">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" style="text-align: center;">
+                            
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </agm-info-window>
+                  </agm-marker>
+                </agm-map>
+              </div>
+
+
+
+
+            </div>
+
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- <div class="row">
+      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+        <div class="card">
+
+          <div class="body">
+
+            <div class="row">
+              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6" style="text-align: center;">
+                <div style="text-align: left;">
+                  <h4>
+                    PH/IN</h4>
+                </div>
+
+
+                <radial-gauge width="250" height="250" unit="PH" units="PH" value-box="false" min-value="0"
+                  max-value="14" major-ticks="0,1,2,3,4,5,6,7,8,9,10,11,12,13,14" minor-ticks="2" stroke-ticks="true"
+                  highlights='[
+                  {"from": 0, "to":6, "color": "rgba(86, 183, 142, 1)"},
+                  {"from": 6, "to": 8, "color": "rgba(246, 204, 107, 1)"},
+                    {"from": 8, "to": 14, "color": "rgba(236, 116, 112, 1)"}
+                  ]' color-plate="#fff" color-major-ticks='#f5f5f5' border-shadow-width="2" borders="false"
+                  needle-type="arrow" needle-width="2" needle-circle-size="12" needle-circle-outer="true"
+                  needle-circle-inner="false" animation-duration="1500" [attr.value]="myValueProperty"
+                  animation-rule="linear">
+                </radial-gauge>
+
+                <div style="text-align: center;">
+                  <h4> 22</h4>
+                </div>
+
+
+
+              </div>
+
+              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6" style="text-align: center;">
+
+                <div style="text-align: left;">
+                  <h4>
+                    PH/OUT</h4>
+                </div>
+
+                <radial-gauge width="250" height="250" unit="PH" units="PH" value-box="false" min-value="0"
+                  max-value="14" major-ticks="0,1,2,3,4,5,6,7,8,9,10,11,12,13,14" minor-ticks="2" stroke-ticks="true"
+                  highlights='[
+                  {"from": 0, "to":6, "color": "rgba(86, 183, 142, 1)"},
+                  {"from": 6, "to": 8, "color": "rgba(246, 204, 107, 1)"},
+                    {"from": 8, "to": 14, "color": "rgba(236, 116, 112, 1)"}
+                  ]' color-plate="#fff" color-major-ticks='#f5f5f5' border-shadow-width="2" borders="false"
+                  needle-type="arrow" needle-width="2" needle-circle-size="12" needle-circle-outer="true"
+                  needle-circle-inner="false" animation-duration="1500" [attr.value]="myValueProperty"
+                  animation-rule="linear">
+                </radial-gauge>
+
+                <div style="text-align: center;">
+                  <h4> 22</h4>
+                </div>
+
+              </div>
+
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+        <div class="card">
+          <div class="body">
+            <div class="row">
+              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6" style="text-align: center;">
+                <div style="text-align: left;">
+                  <h4>
+                    TDS/IN</h4>
+                </div>
+
+
+                <radial-gauge width="250" height="250" units="PPM" value-box="false" min-value="0" max-value="140"
+                  major-ticks="0 , 20 , 40 , 60 , 80 , 90 , 100 , 120 ,140" minor-ticks="2" stroke-ticks="true"
+                  highlights='[
+                  {"from": 0, "to":25, "color": "rgba(86, 183, 142, 1)"},
+                  {"from": 25, "to": 80, "color": "rgba(246, 204, 107, 1)"},
+                    {"from": 80, "to": 140, "color": "rgba(236, 116, 112, 1)"}
+                  ]' color-plate="#fff" color-major-ticks='#f5f5f5' border-shadow-width="2" borders="false"
+                  needle-type="arrow" needle-width="2" needle-circle-size="12" needle-circle-outer="true"
+                  needle-circle-inner="false" animation-duration="1500" [attr.value]="myValueProperty"
+                  animation-rule="linear">
+                </radial-gauge>
+
+                <div style="text-align: center;">
+                  <h4>22 PPM</h4>
+                </div>
+
+              </div>
+
+              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6" style="text-align: center;">
+
+                <div style="text-align: left;">
+                  <h4>
+                    TDS/OUT</h4>
+                </div>
+
+                <radial-gauge width="250" height="250" units="PPM" value-box="false" min-value="0" max-value="140"
+                  major-ticks="0 , 20 , 40 , 60 , 80 , 90 , 100 , 120 ,140" minor-ticks="2" stroke-ticks="true"
+                  highlights='[
+                  {"from": 0, "to":25, "color": "rgba(86, 183, 142, 1)"},
+                  {"from": 25, "to": 80, "color": "rgba(246, 204, 107, 1)"},
+                    {"from": 80, "to": 140, "color": "rgba(236, 116, 112, 1)"}
+                  ]' color-plate="#fff" color-major-ticks='#f5f5f5' border-shadow-width="2" borders="false"
+                  needle-type="arrow" needle-width="2" needle-circle-size="12" needle-circle-outer="true"
+                  needle-circle-inner="false" animation-duration="1500" [attr.value]="myValueProperty"
+                  animation-rule="linear">
+                </radial-gauge>
+                <div style="text-align: center;">
+                  <h4>22 PPM</h4>
+                </div>
+              </div>
+
+
+            </div>
+
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </div> -->
+
+
+    <!-- <div class="row">
+      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+        <div class="card">
+
+          <div class="body">
+
+            <div class="row">
+              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6" style="text-align: center;">
+                <div style="text-align: left;">
+                  <h4>
+                    Turbidity/IN</h4>
+                </div>
+
+
+                <radial-gauge width="250" height="250" unit="PH" units="PH" value-box="false" min-value="0"
+                  max-value="1023" major-ticks="0,300,600,900,1023" minor-ticks="10" stroke-ticks="true" highlights='[
+                {"from": 0, "to":500, "color": "rgba(86, 183, 142, 1)"},
+                {"from": 500, "to": 700, "color": "rgba(246, 204, 107, 1)"},
+                  {"from": 700, "to": 1023, "color": "rgba(236, 116, 112, 1)"}
+                ]' color-plate="#fff" color-major-ticks='#f5f5f5' border-shadow-width="2" borders="false"
+                  needle-type="arrow" needle-width="2" needle-circle-size="12" needle-circle-outer="true"
+                  needle-circle-inner="false" animation-duration="1500" [attr.value]="myValueProperty"
+                  animation-rule="linear">
+                </radial-gauge>
+
+                <div style="text-align: center;">
+                  <h4>22</h4>
+                </div>
+
+              </div>
+
+              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6" style="text-align: center;">
+
+                <div style="text-align: left;">
+                  <h4>
+                    Turbidity/OUT : 22</h4>
+                </div>
+
+                <radial-gauge width="250" height="250" unit="PH" units="PH" value-box="false" min-value="0"
+                  max-value="1023" major-ticks="0,300,600,900,1023" minor-ticks="10" stroke-ticks="true" highlights='[
+                {"from": 0, "to":500, "color": "rgba(86, 183, 142, 1)"},
+                {"from": 500, "to": 700, "color": "rgba(246, 204, 107, 1)"},
+                  {"from": 700, "to": 1023, "color": "rgba(236, 116, 112, 1)"}
+                ]' color-plate="#fff" color-major-ticks='#f5f5f5' border-shadow-width="2" borders="false"
+                  needle-type="arrow" needle-width="2" needle-circle-size="12" needle-circle-outer="true"
+                  needle-circle-inner="false" animation-duration="1500" [attr.value]="myValueProperty"
+                  animation-rule="linear">
+                </radial-gauge>
+                <div style="text-align: center;">
+                  <h4>22</h4>
+                </div>
+              </div>
+
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+        <div class="card">
+          <div class="body">
+            <div class="row">
+              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6" style="text-align: center;">
+                <div style="text-align: left;">
+                  <h4>
+                    Water pressure/IN</h4>
+                </div>
+
+
+                <radial-gauge width="250" height="250" units="PPM" value-box="false" min-value="0" max-value="140"
+                  major-ticks="0 , 20 , 40 , 60 , 80 , 90 , 100 , 120 ,140" minor-ticks="2" stroke-ticks="true"
+                  highlights='[
+                  {"from": 0, "to":25, "color": "rgba(86, 183, 142, 1)"},
+                  {"from": 25, "to": 80, "color": "rgba(246, 204, 107, 1)"},
+                    {"from": 80, "to": 140, "color": "rgba(236, 116, 112, 1)"}
+                  ]' color-plate="#fff" color-major-ticks='#f5f5f5' border-shadow-width="2" borders="false"
+                  needle-type="arrow" needle-width="2" needle-circle-size="12" needle-circle-outer="true"
+                  needle-circle-inner="false" animation-duration="1500" [attr.value]="myValueProperty"
+                  animation-rule="linear">
+                </radial-gauge>
+
+                <div style="text-align: center;">
+                  <h4>22 Bar</h4>
+                </div>
+
+              </div>
+
+              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6" style="text-align: center;">
+
+                <div style="text-align: left;">
+                  <h4>
+                    Water pressure/OUT</h4>
+                </div>
+
+                <radial-gauge width="250" height="250" units="PPM" value-box="false" min-value="0" max-value="140"
+                  major-ticks="0 , 20 , 40 , 60 , 80 , 90 , 100 , 120 ,140" minor-ticks="2" stroke-ticks="true"
+                  highlights='[
+                  {"from": 0, "to":25, "color": "rgba(86, 183, 142, 1)"},
+                  {"from": 25, "to": 80, "color": "rgba(246, 204, 107, 1)"},
+                    {"from": 80, "to": 140, "color": "rgba(236, 116, 112, 1)"}
+                  ]' color-plate="#fff" color-major-ticks='#f5f5f5' border-shadow-width="2" borders="false"
+                  needle-type="arrow" needle-width="2" needle-circle-size="12" needle-circle-outer="true"
+                  needle-circle-inner="false" animation-duration="1500" [attr.value]="myValueProperty"
+                  animation-rule="linear">
+                </radial-gauge>
+                <div style="text-align: center;">
+                  <h4>22 Bar</h4>
+                </div>
+              </div>
+
+
+            </div>
+
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </div> -->
+
+
+
+
+
+  <div class="row clearfix">
+    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+        <div class="card">
+            <div class="header" style="background-color: #0077b6; ">
+                <h2>
+                    <strong style="color: white;">Water Quality</strong></h2>
+              
+            </div>
+            <div class="body table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Details</th>
+                            <th>Water Inlet</th>
+                            <th>Water Outlet</th>
+                            <th>Unit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">PH</th>
+                            <td>{{dataSensor["pHIN"]}}</td>
+                            <td>{{dataSensor["pHOUT"]}}</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">THD</th>
+                            <td>{{dataSensor["TDSIN"]}}</td>
+                            <td>{{dataSensor["TDSOUT"]}}</td>
+                            <td>PPM</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Turbidity</th>
+                            <td>{{dataSensor["turbidityIN"]}}</td>
+                             <td>{{dataSensor["turbidityOUT"]}}</td>
+                            <td>NTU</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Chlorine</th>
+                            <td>{{dataSensor["orpIN"]}}</td>
+                            <td>{{dataSensor["orpOUT"]}}</td>
+                            <td>PPM</td>
+                        </tr>
+                       
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+      <div class="card">
+          <div class="header" style="background-color: #0077b6; ">
+              <h2>
+                  <strong style="color: white;">Water Capability</strong></h2>
+            
+          </div>
+          <div class="body table-responsive">
+              <table class="table table-striped">
+                  <thead>
+                      <tr>
+                          <th>Details</th>
+                          <th>Flow rate</th>
+                          <th>Unit</th>
+                  
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <tr>
+                          <th scope="row">Inlet</th>
+                          <td>{{dataSensor["flowRateIN"]}}</td>
+                       
+                          <td>m3</td>
+                      </tr>
+                      <tr>
+                          <th scope="row">Outlet</th>
+                          <td>{{dataSensor["flowRateOUT"]}}</td>
+                          <td>m3</td>
+                        
+                      </tr>
+                      <tr>
+                          <th scope="row">Drain</th>
+                          <td>{{dataSensor["flowRateDrain"]}}</td>
+                          <td>m3</td>
+                        
+                      </tr>
+                     
+                     
+                  </tbody>
+              </table>
+          </div>
+      </div>
+  </div>
+
+
+</div>
+
+
+<div class="row clearfix">
+  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+      <div class="card">
+          <div class="header" style="background-color: #0077b6; ">
+              <h2>
+                  <strong style="color: white;">Power Consumption</strong></h2>
+            
+          </div>
+          <div class="body table-responsive">
+              <table class="table table-striped">
+                
+                  <tbody>
+                      <tr>
+                          <th scope="row">Total Power</th>
+                          <td>{{dataSensor["kWh"]}}</td>
+                          <td>kWh</td>
+                         
+                      </tr>
+                      
+                     
+                  </tbody>
+              </table>
+          </div>
+      </div>
+  </div>
+
+  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+    <div class="card">
+        <div class="header" style="background-color: #0077b6; ">
+            <h2>
+                <strong style="color: white;">pressure Water Pump</strong></h2>
+          
+        </div>
+        <div class="body table-responsive">
+            <table class="table table-striped">
+              
+                <tbody>
+                    <tr>
+                        <th scope="row">Total pressure</th>
+                        <td>{{dataSensor["wpsIn"]}}</td>
+                     
+                        <td>Bar</td>
+                    </tr>
+                   
+                   
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+</div>
+
+
+
+
+
+  </div>
+
+</section>
+
+
+
+<!-- 
+<div class="container-fluid" style="padding-top: 20px;">
+
+  <div class="mat-card" style="width: 100%; border-radius: 5px !important; background-color : #fff; padding: 20px;">
+
+    <div class="row" style="align-items: center;">
+
+      <div class="col-md">
+
+    
+
+        <div>
+          <p>PH/IN</p>
+
+          <radial-gauge width="250" height="250" unit="PH" units="PH" value-box="false" min-value="0" max-value="14"
+            major-ticks="0,1,2,3,4,5,6,7,8,9,10,11,12,13,14" minor-ticks="2" stroke-ticks="true" highlights='[
+            {"from": 0, "to":6, "color": "rgba(86, 183, 142, 1)"},
+            {"from": 6, "to": 8, "color": "rgba(246, 204, 107, 1)"},
+              {"from": 8, "to": 14, "color": "rgba(236, 116, 112, 1)"}
+            ]' color-plate="#fff" color-major-ticks='#f5f5f5' border-shadow-width="2" borders="false" needle-type="arrow"
+            needle-width="2" needle-circle-size="12" needle-circle-outer="true" needle-circle-inner="false"
+            animation-duration="1500" [attr.value]="myValueProperty" animation-rule="linear">
+          </radial-gauge>
+
+        </div>
+      </div>
+
+      <div class="col-md">
+
+        <div>
+          <p>PH/IN</p>
+
+          <radial-gauge width="250" height="250" unit="PH" units="PH" value-box="false" min-value="0" max-value="14"
+            major-ticks="0,1,2,3,4,5,6,7,8,9,10,11,12,13,14" minor-ticks="2" stroke-ticks="true" highlights='[
+            {"from": 0, "to":6, "color": "rgba(86, 183, 142, 1)"},
+            {"from": 6, "to": 8, "color": "rgba(246, 204, 107, 1)"},
+              {"from": 8, "to": 14, "color": "rgba(236, 116, 112, 1)"}
+            ]' color-plate="#fff" color-major-ticks='#f5f5f5' border-shadow-width="2" borders="false" needle-type="arrow"
+            needle-width="2" needle-circle-size="12" needle-circle-outer="true" needle-circle-inner="false"
+            animation-duration="1500" [attr.value]="myValueProperty" animation-rule="linear">
+          </radial-gauge>
+
+        </div>
+      </div>
+
+      <div class="col-md">
+
+    
+
+        <div>
+          <p>PH/IN</p>
+
+          <radial-gauge width="250" height="250" unit="PH" units="PH" value-box="false" min-value="0" max-value="14"
+            major-ticks="0,1,2,3,4,5,6,7,8,9,10,11,12,13,14" minor-ticks="2" stroke-ticks="true" highlights='[
+            {"from": 0, "to":6, "color": "rgba(86, 183, 142, 1)"},
+            {"from": 6, "to": 8, "color": "rgba(246, 204, 107, 1)"},
+              {"from": 8, "to": 14, "color": "rgba(236, 116, 112, 1)"}
+            ]' color-plate="#fff" color-major-ticks='#f5f5f5' border-shadow-width="2" borders="false" needle-type="arrow"
+            needle-width="2" needle-circle-size="12" needle-circle-outer="true" needle-circle-inner="false"
+            animation-duration="1500" [attr.value]="myValueProperty" animation-rule="linear">
+          </radial-gauge>
+
+        </div>
+      </div>
+
+
+      <div class="col-md">
+
+    
+
+        <div>
+
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+</div>  -->
+
+<!-- <radial-gauge width="200" height="200" unit="PH" units="PH" value-box="false" min-value="0" max-value="14"
+major-ticks="0,1,2,3,4,5,6,7,8,9,10,11,12,13,14" minor-ticks="2" stroke-ticks="true" highlights='[
+{"from": 0, "to":6, "color": "rgba(86, 183, 142, 1)"},
+{"from": 6, "to": 8, "color": "rgba(246, 204, 107, 1)"},
+  {"from": 8, "to": 14, "color": "rgba(236, 116, 112, 1)"}
+]' color-plate="#fff" color-major-ticks='#f5f5f5' border-shadow-width="2" borders="false" needle-type="arrow"
+needle-width="2" needle-circle-size="12" needle-circle-outer="true" needle-circle-inner="false"
+animation-duration="1500" [attr.value]="myValueProperty" animation-rule="linear">
+</radial-gauge> -->
+
+
+
+<!-- <div class="row">
+          <div class="col-md">
+            <mat-card class="mat-elevation-z3">
+              <mat-card-header>
+                <mat-card-title style="color: gray; font-family: Prompt;"><p>PH/IN : {{myValueProperty}}</p></mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+             <div class="d-flex align-items-center" style="text-align: center;"> 
+              <radial-gauge width="250" height="250" unit="PH" units="PH" value-box="false" min-value="0" max-value="14"
+              major-ticks="0,1,2,3,4,5,6,7,8,9,10,11,12,13,14" minor-ticks="2" stroke-ticks="true" highlights='[
+              {"from": 0, "to":6, "color": "rgba(86, 183, 142, 1)"},
+              {"from": 6, "to": 8, "color": "rgba(246, 204, 107, 1)"},
+                {"from": 8, "to": 14, "color": "rgba(236, 116, 112, 1)"}
+              ]' color-plate="#fff" color-major-ticks='#f5f5f5' border-shadow-width="2" borders="false" needle-type="arrow"
+              needle-width="2" needle-circle-size="12" needle-circle-outer="true" needle-circle-inner="false"
+              animation-duration="1500" [attr.value]="myValueProperty" animation-rule="linear">
+            </radial-gauge>
+             </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+      
+          <div class="col-md">
+            <mat-card class="example-card mat-elevation-z3">
+              <mat-card-header>
+                <mat-card-title style="color: gray;">PH/IN : {{myValueProperty}}</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+             <div class="d-flex align-items-center"> 
+              <radial-gauge width="200" height="200" unit="PH" units="PH" value-box="false" min-value="0" max-value="14"
+              major-ticks="0,1,2,3,4,5,6,7,8,9,10,11,12,13,14" minor-ticks="2" stroke-ticks="true" highlights='[
+              {"from": 0, "to":6, "color": "rgba(86, 183, 142, 1)"},
+              {"from": 6, "to": 8, "color": "rgba(246, 204, 107, 1)"},
+                {"from": 8, "to": 14, "color": "rgba(236, 116, 112, 1)"}
+              ]' color-plate="#fff" color-major-ticks='#f5f5f5' border-shadow-width="2" borders="false" needle-type="arrow"
+              needle-width="2" needle-circle-size="12" needle-circle-outer="true" needle-circle-inner="false"
+              animation-duration="1500" [attr.value]="myValueProperty" animation-rule="linear">
+            </radial-gauge>
+             </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+      
+          <div class="col-md">
+            <mat-card class="example-card mat-elevation-z3">
+              <mat-card-header>
+                <mat-card-title style="color: gray;">PH/IN : {{myValueProperty}}</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+             <div class="d-flex align-items-center"> 
+              <radial-gauge width="200" height="200" unit="PH" units="PH" value-box="false" min-value="0" max-value="14"
+              major-ticks="0,1,2,3,4,5,6,7,8,9,10,11,12,13,14" minor-ticks="2" stroke-ticks="true" highlights='[
+              {"from": 0, "to":6, "color": "rgba(86, 183, 142, 1)"},
+              {"from": 6, "to": 8, "color": "rgba(246, 204, 107, 1)"},
+                {"from": 8, "to": 14, "color": "rgba(236, 116, 112, 1)"}
+              ]' color-plate="#fff" color-major-ticks='#f5f5f5' border-shadow-width="2" borders="false" needle-type="arrow"
+              needle-width="2" needle-circle-size="12" needle-circle-outer="true" needle-circle-inner="false"
+              animation-duration="1500" [attr.value]="myValueProperty" animation-rule="linear">
+            </radial-gauge>
+             </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+      
+          <div class="col-md">
+            <mat-card class="example-card mat-elevation-z3">
+              <mat-card-header>
+                <mat-card-title style="color: gray;">PH/IN : {{myValueProperty}}</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+             <div class="d-flex align-items-center"> 
+              <radial-gauge width="200" height="200" unit="PH" units="PH" value-box="false" min-value="0" max-value="14"
+              major-ticks="0,1,2,3,4,5,6,7,8,9,10,11,12,13,14" minor-ticks="2" stroke-ticks="true" highlights='[
+              {"from": 0, "to":6, "color": "rgba(86, 183, 142, 1)"},
+              {"from": 6, "to": 8, "color": "rgba(246, 204, 107, 1)"},
+                {"from": 8, "to": 14, "color": "rgba(236, 116, 112, 1)"}
+              ]' color-plate="#fff" color-major-ticks='#f5f5f5' border-shadow-width="2" borders="false" needle-type="arrow"
+              needle-width="2" needle-circle-size="12" needle-circle-outer="true" needle-circle-inner="false"
+              animation-duration="1500" [attr.value]="myValueProperty" animation-rule="linear">
+            </radial-gauge>
+             </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+      
+      
+      
+      
+          </div> -->

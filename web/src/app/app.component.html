@@ -1,0 +1,5 @@
+<app-page-loader></app-page-loader>
+<app-header *ngIf="!_router.url.includes('/authentication')"></app-header>
+<app-sidebar *ngIf="!_router.url.includes('/authentication')"></app-sidebar>
+<app-right-sidebar></app-right-sidebar>
+<router-outlet></router-outlet>
